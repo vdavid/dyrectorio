@@ -47,6 +47,8 @@ const imageConfigToCompleteContainerConfig = (
   const config: CompleteContainerConfig = {
     ...(imageConfig.config ?? currentConfig ?? DEFAULT_CONFIG),
     name: imageConfig.name ?? currentConfig.name,
+    annotations: currentConfig?.annotations ?? DEFAULT_CONFIG.annotations,
+    labels: currentConfig?.labels ?? DEFAULT_CONFIG.labels,
     environment: currentConfig?.environment ?? {},
     capabilities: currentConfig?.capabilities ?? {},
     secrets: currentConfig?.secrets ?? {},
@@ -75,6 +77,15 @@ const reducer = (state: CompleteContainerConfig, action: EditImageJsonAction): C
 
   throw Error(`Invalid EditImageJson action: ${type}`)
 }
+
+// const mergeMarkers = (marker: Marker, primary: Marker): Marker => {
+//   const result: Marker = {}
+//   Object.entries(marker).forEach(entry => {
+//     const { key, value } = entry
+//   })
+
+//   return result
+// }
 
 const mergeKeyValuesWithJson = (items: UniqueKeyValue[], json: Record<string, string>): UniqueKeyValue[] => {
   if (!json || Object.entries(json).length < 1) {

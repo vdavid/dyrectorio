@@ -5,6 +5,7 @@ import {
   Environment,
   ExplicitContainerConfig,
   ExplicitContainerConfigPort,
+  Marker,
   UniqueKey,
   UniqueKeySecretValue,
   UniqueKeyValue,
@@ -21,6 +22,8 @@ export type InstanceContainerConfig = {
   capabilities: Capabilities
   environment: Environment
   secrets: UniqueKeySecretValue[]
+  annotations?: Marker
+  labels?: Marker
   config: ExplicitContainerConfig
 }
 
@@ -41,6 +44,12 @@ const overrideKeyValues = (weak: UniqueKeyValue[], strong: UniqueKeyValue[]): Un
   const overridenKeys: Set<string> = new Set(strong?.map(it => it.key))
   return [...(weak?.filter(it => !overridenKeys.has(it.key)) ?? []), ...(strong ?? [])]
 }
+
+const overrideMarkers = (weak: Marker, strong: Marker): Marker => ({
+  deployment: overrideKeyValues(weak.deployment, strong.deployment),
+  service: overrideKeyValues(weak.service, strong.service),
+  ingress: overrideKeyValues(weak.ingress, strong.ingress),
+})
 
 const expandKeytoKeyValues = (weak: UniqueKey[]): UniqueKeyValue[] => [
   ...weak.map((it): UniqueKeyValue => ({ id: it.id, key: it.key, value: '' })),
@@ -76,6 +85,8 @@ export const mergeConfigs = (
     name: overriddenConfig.name || imageConfig.name,
     environment: envs,
     capabilities: caps,
+    annotations: overrideMarkers(imageConfig.annotations, instanceConfig.annotations),
+    labels: overrideMarkers(imageConfig.labels, instanceConfig.labels),
     secrets:
       instanceConfig?.secrets && instanceConfig.secrets.length > 0
         ? instanceConfig.secrets

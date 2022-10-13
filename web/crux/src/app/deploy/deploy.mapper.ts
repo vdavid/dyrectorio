@@ -32,6 +32,7 @@ import {
   DeploymentStatus,
   deploymentStatusFromJSON,
   ExplicitContainerConfig,
+  Marker,
   NetworkMode,
   Port,
   UniqueKeySecretValue,
@@ -104,6 +105,8 @@ export default class DeployMapper {
         environment: (instance.config?.environment as UniqueKeyValue[]) ?? [],
         config: (config.config as JsonObject) ?? {},
         secrets: (instance.config?.secrets as unknown as UniqueKeySecretValue[]) ?? [],
+        annotations: (instance.config?.annotations as Marker) ?? {},
+        labels: (instance.config?.labels as Marker) ?? {},
       },
     }
   }

@@ -525,6 +525,8 @@ message ContainerConfig {
   repeated common.UniqueKeyValue capabilities = 1000;
   repeated common.UniqueKeyValue environment = 1001;
   repeated common.UniqueKey secrets = 1002;
+  optional common.Marker annotations = 1003;
+  optional common.Marker labels = 1004;
 }
 
 message ImageResponse {
@@ -566,6 +568,8 @@ message PatchContainerConfig {
   optional common.KeyList secrets = 102;
   optional common.ExplicitContainerConfig config = 103;
   optional string name = 104;
+  optional common.Marker annotations = 105;
+  optional common.Marker labels = 106;
 }
 
 message PatchImageRequest {
@@ -751,6 +755,8 @@ message InstanceContainerConfig {
   repeated common.UniqueKeyValue capabilities = 1000;
   repeated common.UniqueKeyValue environment = 1001;
   repeated common.UniqueKeySecretValue secrets = 1002;
+  optional common.Marker annotations = 1003;
+  optional common.Marker labels = 1004;
 }
 
 message InstanceResponse {
@@ -770,6 +776,8 @@ message PatchInstanceRequest {
   optional common.KeyValueList capabilities = 101;
   optional common.ExplicitContainerConfig config = 102;
   optional common.SecretList secrets = 103;
+  optional common.Marker annotations = 104;
+  optional common.Marker labels = 105;
 }
 
 message DeploymentListResponse { repeated DeploymentResponse data = 1000; }
@@ -896,8 +904,8 @@ message UpdateNotificationRequest {
   string url = 101;
   NotificationType type = 102;
   bool active = 103;
-  
-  repeated NotificationEventType events = 1000; 
+
+  repeated NotificationEventType events = 1000;
 }
 
 message NotificationDetailsResponse {
@@ -909,7 +917,7 @@ message NotificationDetailsResponse {
   NotificationType type = 102;
   bool active = 103;
 
-  repeated NotificationEventType events = 1000; 
+  repeated NotificationEventType events = 1000;
 }
 
 message NotificationResponse {
@@ -921,7 +929,7 @@ message NotificationResponse {
   NotificationType type = 103;
   bool active = 104;
 
-  repeated NotificationEventType events = 1000; 
+  repeated NotificationEventType events = 1000;
 }
 
 message NotificationListResponse { repeated NotificationResponse data = 1000; }

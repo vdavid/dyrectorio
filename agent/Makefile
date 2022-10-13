@@ -8,7 +8,8 @@ BUILD_TIMESTAMP="$(shell date -u +"%Y-%m-%dT%H:%M:%SZ" | tr -d "[:blank:]")"
 
 agent_version=$(or $(VCS_VERSION),$(AGENT_HASH))
 
-LDFLAGS := -ldflags "-X '${PACKAGE}/pkg/version.Version=${VCS_VERSION}'\
+# -s -w turns off: symbol table, debug information
+LDFLAGS := -ldflags "-s -w -X '${PACKAGE}/pkg/version.Version=${VCS_VERSION}'\
   -X '${PACKAGE}/pkg/version.BuildTimestamp=${BUILD_TIMESTAMP}'\
   -X '${PACKAGE}/pkg/version.CommitHash=${AGENT_HASH}'\
   -extldflags '-static'"
@@ -25,6 +26,13 @@ GOOS?=linux
 ifeq ($(GOOS),windows)
 	OUT_EXT=.exe
 endif
+
+
+.PHONY: up
+up: ##
+	cd cli/ && \
+	go run . up ; \
+	cd -
 
 .PHONY: go-crane
 go-crane: ##

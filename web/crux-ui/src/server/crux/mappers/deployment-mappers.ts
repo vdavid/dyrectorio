@@ -1,4 +1,4 @@
-import { DeploymentEventType, DeploymentStatus, Instance, InstanceContainerConfig } from '@app/models'
+import { DeploymentEventType, DeploymentStatus, Instance, InstanceContainerConfig, Marker } from '@app/models'
 import {
   DeploymentStatus as ProtoDeploymentStatus,
   deploymentStatusToJSON,
@@ -33,6 +33,8 @@ export const instanceContainerConfigToDto = (config: ProtoInstanceContainerConfi
     ? null
     : {
         ...config,
+        annotations: {} as Marker,
+        labels: {} as Marker,
         config: explicitContainerConfigToDto(config.config),
       }
 

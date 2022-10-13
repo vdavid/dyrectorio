@@ -23,6 +23,8 @@ export default class ImageMapper {
       environment: config.environment as UniqueKeyValue[],
       config: config.config as JsonObject,
       secrets: config.secrets as UniqueKeyValue[],
+      annotations: config.annotations as JsonObject,
+      labels: config.labels as JsonObject,
     }
   }
 }

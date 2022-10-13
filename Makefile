@@ -66,6 +66,22 @@ proto-crux-ui:
 .PHONY: all
 all: | protogen docs
 
+.PHONY: up
+up:
+	cd cli && \
+	go run . up && \
+	cd ..
+
+.PHONY: down
+down:
+	cd cli && \
+	go run . down && \
+	cd ..
+
+.PHONY: edit-config
+edit-config:
+	$(EDITOR) $(HOME)/.config/dyo-cli/settings.yaml
+
 .PHONY: build-proto-image
 build-proto-image:
 	docker build -t ghcr.io/dyrector-io/dyrectorio/alpine-proto:3.16 images/proto

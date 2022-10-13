@@ -4,6 +4,7 @@ metadata:
   name: agent-data
   namespace: dyrectorio
 spec:
+  storageClassName: azurefile
   accessModes:
     - ReadWriteOnce
   resources:

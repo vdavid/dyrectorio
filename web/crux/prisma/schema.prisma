@@ -166,6 +166,8 @@ model ContainerConfig {
   environment  Json   @default("[]")
   secrets      Json   @default("[]")
   capabilities Json   @default("[]")
+  annotations  Json   @default("{}")
+  labels       Json   @default("{}")
   config       Json   @default("{}")
 
   image   Image  @relation(fields: [imageId], references: [id], onDelete: Cascade)
@@ -210,6 +212,8 @@ model InstanceContainerConfig {
   config       Json?
   secrets      Json?
   environment  Json?
+  annotations  Json?
+  labels       Json?
   instanceId   String @unique @db.Uuid
 
   instance Instance @relation(fields: [instanceId], references: [id], onDelete: Cascade)

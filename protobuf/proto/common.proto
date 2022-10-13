@@ -210,6 +210,14 @@ message ExplicitContainerConfig {
   repeated string environments = 1005;
   optional KeyValueList secrets = 1006;
   repeated InitContainer initContainers = 1007;
+  optional Marker annotations = 1008;
+  optional Marker labels = 1009;
+}
+
+message Marker {
+  optional KeyValueList deployment = 1000;
+  optional KeyValueList service = 1001;
+  optional KeyValueList ingress = 1002;
 }
 
 message UniqueKey {

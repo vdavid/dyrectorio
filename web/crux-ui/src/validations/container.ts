@@ -7,7 +7,7 @@ import {
   EXPLICIT_CONTAINER_RESTART_POLICY_TYPE_VALUES,
 } from '@app/models/container'
 import * as yup from 'yup'
-import { stringStringMapRule } from './common'
+import { markerRule, stringStringMapRule } from './common'
 
 const portNumberRule = yup.number().positive().lessThan(65536).required()
 
@@ -175,6 +175,8 @@ export const completeContainerConfigSchema = explicitContainerConfigSchema.shape
   environment: stringStringMapRule.default({}),
   capabilities: stringStringMapRule.default({}),
   secrets: stringStringMapRule.default({}),
+  annotations: markerRule,
+  labels: markerRule,
 })
 
 export const uniqueKeyValuesSchema = yup

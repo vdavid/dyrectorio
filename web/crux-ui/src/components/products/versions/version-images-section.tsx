@@ -54,6 +54,8 @@ export const mergeImagePatch = (oldImage: VersionImage, newImage: PatchVersionIm
   ...newImage,
   config: {
     name: newImage.config?.name ?? oldImage.config.name,
+    annotations: newImage.config?.annotations ?? oldImage.config.annotations,
+    labels: newImage.config?.labels ?? oldImage.config.labels,
     environment: newImage.config?.environment ?? oldImage.config.environment,
     capabilities: newImage.config?.capabilities ?? oldImage.config.capabilities,
     config: newImage.config?.config ?? oldImage.config.config,

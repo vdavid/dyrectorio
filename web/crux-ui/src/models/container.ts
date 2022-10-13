@@ -156,16 +156,26 @@ export type ExplicitContainerConfig = {
   resourceConfig?: ExplicitContainerConfigResourceConfig
 }
 
+export type Marker = {
+  deployment?: UniqueKeyValue[]
+  service?: UniqueKeyValue[]
+  ingress?: UniqueKeyValue[]
+}
+
 export type ContainerConfig = {
   name: string
   capabilities: Capabilities
   environment: Environment
+  annotations: Marker
+  labels: Marker
   config: ExplicitContainerConfig
   secrets: Secrets
 }
 
 export type CompleteContainerConfig = ExplicitContainerConfig & {
   name: string
+  annotations: Marker
+  labels: Marker
   environment?: Record<string, string>
   capabilities?: Record<string, string>
   secrets?: Record<string, string>

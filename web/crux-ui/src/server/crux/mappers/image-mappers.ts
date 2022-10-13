@@ -5,6 +5,7 @@ import {
   ExplicitContainerDeploymentStrategyType,
   ExplicitContainerNetworkMode,
   ExplicitContainerRestartPolicyType,
+  Marker,
   VersionImage,
 } from '@app/models'
 import {
@@ -176,6 +177,8 @@ export const containerConfigToDto = (config?: ProtoContainerConfig): ContainerCo
     ? null
     : {
         ...config,
+        annotations: config.annotations as any as Marker,
+        labels: config.labels as any as Marker,
         config: explicitContainerConfigToDto(config.config),
       }
 

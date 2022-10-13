@@ -95,4 +95,4 @@ require (
 
 replace github.com/dyrector-io/dyrectorio/agent => ./
 
-replace github.com/dyrector-io/dyrectorio/protobuf => ../protobuf
+//replace github.com/dyrector-io/dyrectorio/protobuf => ../protobuf

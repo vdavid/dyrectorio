@@ -232,6 +232,7 @@ func GetCruxPostgres(settings *Settings) *containerbuilder.DockerContainerBuilde
 			fmt.Sprintf("POSTGRES_PASSWORD=%s", settings.SettingsFile.CruxPostgresPassword),
 			fmt.Sprintf("POSTGRES_DB=%s", settings.SettingsFile.CruxPostgresDB),
 		}).
+		WithoutConflict().
 		WithPortBindings([]containerbuilder.PortBinding{
 			{
 				ExposedPort: DefaultPostgresPort,
@@ -258,6 +259,7 @@ func GetKratosPostgres(settings *Settings) *containerbuilder.DockerContainerBuil
 				PortBinding: uint16(settings.SettingsFile.KratosPostgresPort),
 			}}).
 		WithName(settings.Containers.KratosPostgres.Name).
+		WithoutConflict().
 		WithNetworkAliases(settings.Containers.KratosPostgres.Name).
 		WithMountPoints([]mount.Mount{
 			{Type: mount.TypeVolume,

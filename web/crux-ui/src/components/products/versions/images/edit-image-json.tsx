@@ -38,6 +38,8 @@ const imageConfigToCompleteContainerConfig = (
   const config: CompleteContainerConfig = {
     ...(imageConfig.config ?? currentConfig ?? DEFAULT_CONFIG),
     name: imageConfig.name ?? currentConfig.name,
+    annotations: currentConfig?.annotations ?? DEFAULT_CONFIG.annotations,
+    labels: currentConfig?.labels ?? DEFAULT_CONFIG.labels,
     environment: currentConfig?.environment ?? {},
     capabilities: currentConfig?.capabilities ?? {},
     secrets: currentConfig?.secrets ?? {},

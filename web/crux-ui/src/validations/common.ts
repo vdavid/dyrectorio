@@ -20,6 +20,15 @@ export const stringStringMapRule = yup.object().test(it => {
   return entries.length === strings.length
 })
 
+export const markerRule = yup
+  .object()
+  .shape({
+    deployment: stringStringMapRule.default({}),
+    service: stringStringMapRule.default({}),
+    ingress: stringStringMapRule.default({}),
+  })
+  .optional()
+
 export const iconRule = yup
   .string()
   .oneOf([null, ...DYO_ICONS])

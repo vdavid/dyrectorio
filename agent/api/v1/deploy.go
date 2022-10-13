@@ -118,6 +118,26 @@ type ResourceConfig struct {
 	Requests Resources `json:"requests"`
 }
 
+// Annotations passed to workload
+type Annonations struct {
+	// Deployment used in both cases
+	Deployment map[string]string
+	// k8s-only, service annonations
+	Service map[string]string
+	// k8s-only ingress annotations
+	Ingress map[string]string
+}
+
+// Labels passed to workload
+type Labels struct {
+	// Deployment used in both cases
+	Deployment map[string]string
+	// k8s-only, service annonations
+	Service map[string]string
+	// k8s-only ingress annotations
+	Ingress map[string]string
+}
+
 type ContainerConfig struct {
 	// ContainerPreName identifies namespace to be used
 	ContainerPreName string `json:"containerPreName"`
@@ -133,6 +153,10 @@ type ContainerConfig struct {
 	Volumes []Volume `json:"volumes,omitempty" binding:"dive"`
 	// environment variables list
 	Environment []string `json:"environment"`
+	// Labels
+	Labels Labels `json:"labels,omitempty"`
+	// Annotations
+	Annonations Annonations `json:"annotations,omitempty"`
 	// Secrets
 	Secrets map[string]string `json:"secrets,omitempty"`
 	// the type of the runtime text provided eg. dotnet-appsettings
