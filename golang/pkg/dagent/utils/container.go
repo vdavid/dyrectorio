@@ -11,6 +11,7 @@ import (
 	"github.com/docker/docker/api/types/mount"
 	"github.com/rs/zerolog/log"
 
+	dockerhelper "github.com/dyrector-io/dyrectorio/golang/internal/helper/docker"
 	containerbuilder "github.com/dyrector-io/dyrectorio/golang/pkg/builder/container"
 	"github.com/dyrector-io/dyrectorio/golang/pkg/dagent/model"
 
@@ -29,8 +30,10 @@ func ExecWatchtowerOneShot(ctx context.Context, cfg *config.Configuration) error
 
 func ExecWatchtowerPoll(ctx context.Context, cfg *config.Configuration) error {
 	// TODO(nandor-magyar): do we need this updater? IIRC dagent can update itself
-	container := GetContainer(cfg.UpdaterContainerName)
-	var err error
+	container, err := dockerhelper.GetContainersByName(context.Background(), nil, cfg.UpdaterContainerName)
+	if err != nil {
+		return err
+	}
 
 	if len(container) < 1 {
 		b := initDagentUpdaterBuilder(ctx, cfg)
@@ -148,14 +151,12 @@ func ExecTraefik(ctx context.Context, traefikDeployReq model.TraefikDeployReques
 		ports = append(ports, containerbuilder.PortBinding{PortBinding: traefikDeployReq.TLSPort, ExposedPort: 443})
 	}
 
-	container := GetContainer("traefik")
-
-	if len(container) == 1 {
-		_ = stopContainer("traefik")
-		_ = removeContainer("traefik")
+	if err = dockerhelper.DeleteContainerByName(ctx, nil, "traefik"); err != nil {
+		log.Error().Stack().Err(err).Msg("delete traefik container error")
+		return err
 	}
 
-	if err = CreateNetwork(ctx, "traefik", "bridge"); err != nil {
+	if err = dockerhelper.CreateNetwork(ctx, "traefik", "bridge"); err != nil {
 		log.Error().Stack().Err(err).Msg("create traefik network error")
 		return err
 	}

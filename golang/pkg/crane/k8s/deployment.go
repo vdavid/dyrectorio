@@ -15,6 +15,7 @@ import (
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/apimachinery/pkg/util/intstr"
 
+	imagehelper "github.com/dyrector-io/dyrectorio/golang/internal/helper/image"
 	"github.com/dyrector-io/dyrectorio/golang/internal/util"
 	builder "github.com/dyrector-io/dyrectorio/golang/pkg/builder/container"
 	"github.com/dyrector-io/dyrectorio/golang/pkg/crane/config"
@@ -46,7 +47,7 @@ func newDeployment(ctx context.Context, cfg *config.Configuration) *deployment {
 
 type deploymentParams struct {
 	namespace       string
-	image           util.ImageURI
+	image           imagehelper.ImageURI
 	containerConfig *v1.ContainerConfig
 	configMapsEnv   []string
 	secrets         []string

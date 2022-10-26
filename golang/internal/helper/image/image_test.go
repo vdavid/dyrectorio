@@ -1,7 +1,7 @@
 //go:build unit
 // +build unit
 
-package util_test
+package image_test
 
 import (
 	"testing"
@@ -9,6 +9,7 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/stretchr/testify/assert"
 
+	imagehelper "github.com/dyrector-io/dyrectorio/golang/internal/helper/image"
 	"github.com/dyrector-io/dyrectorio/golang/internal/util"
 	builder "github.com/dyrector-io/dyrectorio/golang/pkg/builder/container"
 	"github.com/dyrector-io/dyrectorio/protobuf/go/agent"
@@ -16,17 +17,17 @@ import (
 
 func TestNameEmpty(t *testing.T) {
 	empty := ""
-	res, err := util.ImageURIFromString(empty)
+	res, err := imagehelper.ImageURIFromString(empty)
 
 	assert.Nil(t, res)
-	assert.ErrorIs(t, err, &util.EmptyImageError{})
+	assert.ErrorIs(t, err, &imagehelper.EmptyImageError{})
 	log.Print(err.Error())
 }
 
 func TestNameShort(t *testing.T) {
 	image := "nginx"
 	tag := "latest"
-	res, err := util.ImageURIFromString(util.JoinV(":", image, tag))
+	res, err := imagehelper.ImageURIFromString(util.JoinV(":", image, tag))
 
 	assert.Equal(t, res.Host, "")
 	assert.Equal(t, res.Name, image)
@@ -36,10 +37,10 @@ func TestNameShort(t *testing.T) {
 
 func TestNameNoTag(t *testing.T) {
 	imageName := "nginx"
-	res, err := util.ImageURIFromString(imageName)
+	res, err := imagehelper.ImageURIFromString(imageName)
 
 	assert.Nil(t, res)
-	testErr := &util.InvalidImageURIError{Image: imageName}
+	testErr := &imagehelper.InvalidImageURIError{Image: imageName}
 	assert.Equal(t, err.Error(), testErr.Error())
 }
 
@@ -47,7 +48,7 @@ func TestNameFullyQualified(t *testing.T) {
 	image := "reg.dyrector.io/library/nginx"
 	tag := "test"
 
-	res, err := util.ImageURIFromString(util.JoinV(":", image, tag))
+	res, err := imagehelper.ImageURIFromString(util.JoinV(":", image, tag))
 
 	assert.Equal(t, res.Host, "reg.dyrector.io/library")
 	assert.Equal(t, res.Name, "nginx")
@@ -59,29 +60,29 @@ func TestNameInvalid(t *testing.T) {
 	image := "reg.dyrector.io/library/inv:alid"
 	tag := "te:st"
 
-	res, err := util.ImageURIFromString(util.JoinV(":", image, tag))
+	res, err := imagehelper.ImageURIFromString(util.JoinV(":", image, tag))
 
 	assert.Nil(t, res)
-	assert.ErrorIs(t, err, &util.MultiColonRegistryURIError{})
+	assert.ErrorIs(t, err, &imagehelper.MultiColonRegistryURIError{})
 	log.Print(err.Error())
 }
 
 func TestImageToStringDockerHub(t *testing.T) {
-	image := &util.ImageURI{Host: "", Name: "nginx", Tag: "latest"}
+	image := &imagehelper.ImageURI{Host: "", Name: "nginx", Tag: "latest"}
 
 	assert.Equal(t, "docker.io/library/nginx:latest", image.String())
 	assert.Equal(t, "docker.io/library/nginx", image.StringNoTag())
 }
 
 func TestImageToStringPrivateRegistry(t *testing.T) {
-	image := &util.ImageURI{Host: "reg.sunilium.com", Name: "helios/platform-iam", Tag: "1.0.0.sta-20210721.1"}
+	image := &imagehelper.ImageURI{Host: "reg.sunilium.com", Name: "helios/platform-iam", Tag: "1.0.0.sta-20210721.1"}
 
 	assert.Equal(t, "reg.sunilium.com/helios/platform-iam:1.0.0.sta-20210721.1", image.String())
 	assert.Equal(t, "reg.sunilium.com/helios/platform-iam", image.StringNoTag())
 }
 
 func TestImageToStringWithoutTag(t *testing.T) {
-	image := &util.ImageURI{Host: "", Name: "alpine"}
+	image := &imagehelper.ImageURI{Host: "", Name: "alpine"}
 
 	assert.Equal(t, "docker.io/library/alpine:latest", image.String())
 	assert.Equal(t, "docker.io/library/alpine", image.StringNoTag())
@@ -92,7 +93,7 @@ func TestRegistryUrl(t *testing.T) {
 		URL: "test",
 	}
 
-	url := util.GetRegistryURL(nil, auth)
+	url := imagehelper.GetRegistryURL(nil, auth)
 	assert.Equal(t, url, "test")
 }
 
@@ -102,19 +103,19 @@ func TestRegistryUrlPriority(t *testing.T) {
 		URL: "test",
 	}
 
-	url := util.GetRegistryURL(&registry, auth)
+	url := imagehelper.GetRegistryURL(&registry, auth)
 	assert.Equal(t, url, "test")
 }
 
 func TestRegistryUrlRegistry(t *testing.T) {
 	registry := "other"
 
-	url := util.GetRegistryURL(&registry, nil)
+	url := imagehelper.GetRegistryURL(&registry, nil)
 	assert.Equal(t, url, "other")
 }
 
 func TestRegistryUrlEmpty(t *testing.T) {
-	url := util.GetRegistryURL(nil, nil)
+	url := imagehelper.GetRegistryURL(nil, nil)
 	assert.Equal(t, url, "")
 }
 
@@ -123,7 +124,7 @@ func TestProtoRegistryUrl(t *testing.T) {
 		Url: "test",
 	}
 
-	url := util.GetRegistryURLProto(nil, auth)
+	url := imagehelper.GetRegistryURLProto(nil, auth)
 	assert.Equal(t, url, "test")
 }
 
@@ -133,18 +134,18 @@ func TestProtoRegistryUrlPriority(t *testing.T) {
 		Url: "test",
 	}
 
-	url := util.GetRegistryURLProto(&registry, auth)
+	url := imagehelper.GetRegistryURLProto(&registry, auth)
 	assert.Equal(t, url, "test")
 }
 
 func TestProtoRegistryUrlRegistry(t *testing.T) {
 	registry := "other"
 
-	url := util.GetRegistryURLProto(&registry, nil)
+	url := imagehelper.GetRegistryURLProto(&registry, nil)
 	assert.Equal(t, url, "other")
 }
 
 func TestProtoRegistryUrlEmpty(t *testing.T) {
-	url := util.GetRegistryURLProto(nil, nil)
+	url := imagehelper.GetRegistryURLProto(nil, nil)
 	assert.Equal(t, url, "")
 }

@@ -16,16 +16,17 @@ import (
 	"github.com/docker/go-connections/nat"
 	"github.com/stretchr/testify/assert"
 
+	dockerhelper "github.com/dyrector-io/dyrectorio/golang/internal/helper/docker"
 	containerbuilder "github.com/dyrector-io/dyrectorio/golang/pkg/builder/container"
 )
 
 func builderCleanup(builder *containerbuilder.DockerContainerBuilder) {
 	if builder.GetContainerID() != nil {
-		containerbuilder.DeleteContainer(context.Background(), *builder.GetContainerID())
+		dockerhelper.DeleteContainerByName(context.Background(), nil, *builder.GetContainerID())
 	}
 	if networks := builder.GetNetworkIDs(); networks != nil {
 		for _, network := range networks {
-			containerbuilder.DeleteNetwork(context.Background(), network)
+			dockerhelper.DeleteNetworkByID(context.Background(), network)
 		}
 	}
 }

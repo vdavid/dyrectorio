@@ -90,17 +90,6 @@ type Options struct {
 	MailSlurperWebPort2            uint   `yaml:"mailSlurperWebPort2" env-default:"4437"`
 }
 
-const DefaultPostgresPort = 5432
-
-const SecretLength = 32
-
-const BufferMultiplier = 2
-
-const (
-	FilePerms = 0o600
-	DirPerms  = 0o750
-)
-
 const (
 	SettingsFileName = "settings.yaml"
 	SettingsFileDir  = "dyo-cli"
@@ -122,8 +111,12 @@ const (
 )
 
 const (
-	ParseBase    = 10
-	ParseBitSize = 32
+	ParseBase        = 10
+	ParseBitSize     = 32
+	FilePerms        = 0o600
+	DirPerms         = 0o750
+	SecretLength     = 32
+	BufferMultiplier = 2
 )
 
 // Check if the settings file is exists

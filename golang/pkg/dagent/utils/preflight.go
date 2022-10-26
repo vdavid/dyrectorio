@@ -1,16 +1,18 @@
 package utils
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/hashicorp/go-version"
 	"github.com/rs/zerolog/log"
 
+	dockerhelper "github.com/dyrector-io/dyrectorio/golang/internal/helper/docker"
 	"github.com/dyrector-io/dyrectorio/golang/pkg/dagent/config"
 )
 
 func PreflightChecks(cfg *config.Configuration) {
-	_, err := ListContainers()
+	_, err := dockerhelper.GetAllContainers(context.Background(), nil)
 	if err != nil {
 		log.Fatal().Stack().Err(err).Msg("")
 	}

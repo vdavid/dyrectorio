@@ -39,7 +39,7 @@ func Serve(cfg *config.Configuration) {
 	grpc.Init(grpcContext, grpcParams, &cfg.CommonConfiguration, grpc.WorkerFunctions{
 		Deploy:     utils.DeployImage,
 		Watch:      utils.GetContainersByNameCrux,
-		Delete:     utils.DeleteContainerByName,
+		Delete:     utils.DeleteContainerByNameGrpc,
 		SecretList: utils.SecretList,
 	})
 }

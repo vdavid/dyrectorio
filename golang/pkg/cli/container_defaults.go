@@ -29,6 +29,7 @@ const (
 	defaultMailSlurperSMTPPort = 1025
 	defaultMailSlurperWebPort  = 4436
 	defaultMailSlurperWebPort2 = 4437
+	defaultPostgresPort        = 5432
 )
 
 // Crux services: db migrations and crux api service
@@ -45,7 +46,7 @@ func GetCrux(settings *Settings) *containerbuilder.DockerContainerBuilder {
 				settings.SettingsFile.CruxPostgresUser,
 				settings.SettingsFile.CruxPostgresPassword,
 				settings.Containers.CruxPostgres.Name,
-				DefaultPostgresPort,
+				defaultPostgresPort,
 				settings.SettingsFile.CruxPostgresDB),
 			fmt.Sprintf("KRATOS_ADMIN_URL=http://%s:%d",
 				settings.Containers.Kratos.Name,
@@ -98,7 +99,7 @@ func GetCruxMigrate(settings *Settings) *containerbuilder.DockerContainerBuilder
 				settings.SettingsFile.CruxPostgresUser,
 				settings.SettingsFile.CruxPostgresPassword,
 				settings.Containers.CruxPostgres.Name,
-				DefaultPostgresPort,
+				defaultPostgresPort,
 				settings.SettingsFile.CruxPostgresDB),
 		}).
 		WithNetworks([]string{settings.SettingsFile.Network}).
@@ -235,7 +236,7 @@ func GetKratos(settings *Settings) *containerbuilder.DockerContainerBuilder {
 				settings.SettingsFile.KratosPostgresUser,
 				settings.SettingsFile.KratosPostgresPassword,
 				settings.Containers.KratosPostgres.Name,
-				DefaultPostgresPort,
+				defaultPostgresPort,
 				settings.SettingsFile.KratosPostgresDB),
 			fmt.Sprintf("KRATOS_URL=http://localhost:%d/kratos",
 				settings.SettingsFile.TraefikWebPort),
@@ -293,7 +294,7 @@ func GetKratosMigrate(settings *Settings) *containerbuilder.DockerContainerBuild
 				settings.SettingsFile.KratosPostgresUser,
 				settings.SettingsFile.KratosPostgresPassword,
 				settings.Containers.KratosPostgres.Name,
-				DefaultPostgresPort,
+				defaultPostgresPort,
 				settings.SettingsFile.KratosPostgresDB),
 		}).
 		WithNetworks([]string{settings.SettingsFile.Network}).
@@ -343,7 +344,7 @@ func GetCruxPostgres(settings *Settings) *containerbuilder.DockerContainerBuilde
 		}).
 		WithPortBindings([]containerbuilder.PortBinding{
 			{
-				ExposedPort: DefaultPostgresPort,
+				ExposedPort: defaultPostgresPort,
 				PortBinding: uint16(settings.SettingsFile.CruxPostgresPort),
 			},
 		}).
@@ -365,7 +366,7 @@ func GetKratosPostgres(settings *Settings) *containerbuilder.DockerContainerBuil
 		}).
 		WithPortBindings([]containerbuilder.PortBinding{
 			{
-				ExposedPort: DefaultPostgresPort,
+				ExposedPort: defaultPostgresPort,
 				PortBinding: uint16(settings.SettingsFile.KratosPostgresPort),
 			},
 		}).

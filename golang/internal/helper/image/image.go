@@ -1,10 +1,13 @@
-package util
+package image
 
 import (
+	"fmt"
 	"strings"
 
-	builder "github.com/dyrector-io/dyrectorio/golang/pkg/builder/container"
 	"github.com/dyrector-io/dyrectorio/protobuf/go/agent"
+
+	"github.com/dyrector-io/dyrectorio/golang/internal/util"
+	builder "github.com/dyrector-io/dyrectorio/golang/pkg/builder/container"
 )
 
 type ImageURI struct {
@@ -62,7 +65,7 @@ func ImageURIFromString(imageName string) (*ImageURI, error) {
 		// removing the last element
 		repoArr = repoArr[:len(repoArr)-1]
 		// conjoining the remaining into the result
-		image.Host = JoinV("/", repoArr...)
+		image.Host = util.JoinV("/", repoArr...)
 	} else {
 		image.Name = nameArr[0]
 	}
@@ -72,12 +75,12 @@ func ImageURIFromString(imageName string) (*ImageURI, error) {
 
 func (image *ImageURI) String() string {
 	setDefaults(image)
-	return JoinV("/", image.Host, image.Name+":"+image.Tag)
+	return fmt.Sprintf("%s/%s", image.Host, image.Name+":"+image.Tag)
 }
 
 func (image *ImageURI) StringNoTag() string {
 	setDefaults(image)
-	return JoinV("/", image.Host, image.Name)
+	return fmt.Sprintf("%s/%s", image.Host, image.Name)
 }
 
 func setDefaults(image *ImageURI) {
