@@ -4357,6 +4357,8 @@ export interface CruxNodeClient {
 
   revokeToken(request: IdRequest, metadata: Metadata, ...rest: any): Observable<Empty>
 
+  updateNodeAgent(request: IdRequest, metadata: Metadata, ...rest: any): Observable<Empty>
+
   subscribeNodeEventChannel(request: ServiceIdRequest, metadata: Metadata, ...rest: any): Observable<NodeEventMessage>
 
   watchContainerState(
@@ -4407,6 +4409,8 @@ export interface CruxNodeController {
 
   revokeToken(request: IdRequest, metadata: Metadata, ...rest: any): Promise<Empty> | Observable<Empty> | Empty
 
+  updateNodeAgent(request: IdRequest, metadata: Metadata, ...rest: any): Promise<Empty> | Observable<Empty> | Empty
+
   subscribeNodeEventChannel(request: ServiceIdRequest, metadata: Metadata, ...rest: any): Observable<NodeEventMessage>
 
   watchContainerState(
@@ -4428,6 +4432,7 @@ export function CruxNodeControllerMethods() {
       'getScript',
       'discardScript',
       'revokeToken',
+      'updateNodeAgent',
       'subscribeNodeEventChannel',
       'watchContainerState',
     ]

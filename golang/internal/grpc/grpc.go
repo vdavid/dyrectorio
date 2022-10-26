@@ -45,6 +45,7 @@ type (
 	WatchFunc      func(context.Context, string) []*common.ContainerStateItem
 	DeleteFunc     func(context.Context, string, string) error
 	SecretListFunc func(context.Context, string, string) ([]string, error)
+	UpdateFunc     func(context.Context) error
 )
 
 type WorkerFunctions struct {
@@ -52,6 +53,7 @@ type WorkerFunctions struct {
 	Watch      WatchFunc
 	Delete     DeleteFunc
 	SecretList SecretListFunc
+	Update     UpdateFunc
 }
 
 type contextKey int
@@ -240,6 +242,8 @@ func grpcLoop(
 			go executeVersionDeployLegacyRequest(ctx, command.GetDeployLegacy(), workerFuncs.Deploy, appConfig)
 		} else if command.GetListSecrets() != nil {
 			go executeSecretList(ctx, command.GetListSecrets(), workerFuncs.SecretList, appConfig)
+		} else if command.GetUpdate() != nil {
+			go executeUpdate(ctx, command.GetUpdate(), workerFuncs.Update)
 		} else {
 			log.Print("Unknown agent command")
 		}
@@ -442,6 +446,13 @@ func executeSecretList(
 	_, err = grpcConn.Client.SecretList(ctx, resp)
 	if err != nil {
 		log.Error().Stack().Err(err).Msg("Secret list response error")
+		return
+	}
+}
+
+func executeUpdate(ctx context.Context, command *agent.AgentUpdateRequest, updateFunc UpdateFunc) {
+	if err := updateFunc(ctx); err != nil {
+		log.Error().Stack().Err(err).Msg("Update error")
 		return
 	}
 }

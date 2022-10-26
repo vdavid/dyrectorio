@@ -46,6 +46,7 @@ message AgentCommand {
     ContainerDeleteRequest containerDelete = 3;
     DeployRequestLegacy deployLegacy = 4;
     ListSecretsRequest listSecrets = 5;
+    AgentUpdateRequest update = 6;
   }
 }
 
@@ -220,4 +221,11 @@ message ContainerDeleteRequest {
 message DeployRequestLegacy {
   string requestId = 1; // for early dogger logging
   string json = 2;
+}
+
+/*
+ * Dagent update
+ *
+ */
+message AgentUpdateRequest {
 }

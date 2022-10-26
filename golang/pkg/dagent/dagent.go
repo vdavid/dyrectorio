@@ -41,5 +41,6 @@ func Serve(cfg *config.Configuration) {
 		Watch:      utils.GetContainersByNameCrux,
 		Delete:     utils.DeleteContainerByName,
 		SecretList: utils.SecretList,
+		Update:     update.SelfUpdate,
 	})
 }

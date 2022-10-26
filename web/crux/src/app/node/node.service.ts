@@ -188,4 +188,10 @@ export default class NodeService {
     const watcher = agent.upsertContainerStatusWatcher(prefix)
     return watcher.watch()
   }
+
+  async updateNodeAgent(request: IdRequest): Promise<Empty> {
+    this.agentService.updateAgent(request.id)
+
+    return {}
+  }
 }

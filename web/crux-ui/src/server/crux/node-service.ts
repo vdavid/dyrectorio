@@ -215,6 +215,18 @@ class DyoNodeService {
     const stream = () => this.client.watchContainerState(WatchContainerStateRequest.fromJSON(req))
     return new GrpcConnection(this.logger.descend('container-status'), stream, transform, options)
   }
+
+  async updateNodeAgent(id: string): Promise<void> {
+    const req: IdRequest = {
+      id,
+      accessedBy: this.identity.id,
+    }
+
+    const res = await protomisify<IdRequest, Empty>(this.client, this.client.updateNodeAgent)(
+      IdRequest,
+      req,
+    )
+  }
 }
 
 export default DyoNodeService

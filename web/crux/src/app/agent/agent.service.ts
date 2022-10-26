@@ -228,6 +228,12 @@ export default class AgentService {
     return of(Empty)
   }
 
+  updateAgent(id: string) {
+    const agent = this.getByIdOrThrow(id)
+
+    agent.update()
+  }
+
   private onAgentConnectionStatusChange(agent: Agent, status: NodeConnectionStatus) {
     if (status === NodeConnectionStatus.UNREACHABLE) {
       this.logger.log(`Left: ${agent.id}`)

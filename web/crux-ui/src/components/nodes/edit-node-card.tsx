@@ -17,9 +17,11 @@ import {
   NodeStatusMessage,
   NodeType,
   UpdateDyoNode,
+  UpdateNodeAgentMessage,
   WS_TYPE_NODE_STATUS,
+  WS_TYPE_UPDATE_NODE_AGENT,
 } from '@app/models'
-import { API_NODES, nodeApiUrl, nodeTokenApiUrl, WS_NODES } from '@app/routes'
+import { API_NODES, nodeApiUrl, nodeTokenApiUrl, nodeWsUrl, WS_NODES } from '@app/routes'
 import { sendForm } from '@app/utils'
 import { nodeSchema } from '@app/validations'
 import clsx from 'clsx'
@@ -76,6 +78,8 @@ const EditNodeCard = (props: EditNodeCardProps) => {
     onNodeEdited(newNode)
   })
 
+  const nodeSocket = editing ? useWebSocket(nodeWsUrl(node.id)) : null
+
   const onNodeInstallChanged = (install: DyoNodeInstall) => {
     const newNode = {
       ...node,
@@ -114,6 +118,12 @@ const EditNodeCard = (props: EditNodeCardProps) => {
       ...node,
       type,
     })
+  }
+
+  const onUpdateNode = () => {
+    nodeSocket.send(WS_TYPE_UPDATE_NODE_AGENT, {
+      id: node.id
+    } as UpdateNodeAgentMessage)
   }
 
   const formik = useFormik({
@@ -187,6 +197,12 @@ const EditNodeCard = (props: EditNodeCardProps) => {
           </DyoHeading>
 
           <DyoLabel textColor="text-bright-muted">{t('tips')}</DyoLabel>
+
+          {editing && (
+            <DyoButton className="px-6 mt-4 mr-auto" secondary onClick={onUpdateNode}>
+              {t('update')}
+            </DyoButton>
+          )}
 
           <form className="flex flex-col" onSubmit={formik.handleSubmit} onReset={formik.handleReset}>
             <DyoInput

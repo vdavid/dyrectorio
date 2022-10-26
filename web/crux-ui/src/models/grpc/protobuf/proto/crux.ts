@@ -10284,6 +10284,15 @@ export const CruxNodeService = {
     responseSerialize: (value: Empty) => Buffer.from(Empty.encode(value).finish()),
     responseDeserialize: (value: Buffer) => Empty.decode(value),
   },
+  updateNodeAgent: {
+    path: '/crux.CruxNode/UpdateNodeAgent',
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: IdRequest) => Buffer.from(IdRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer) => IdRequest.decode(value),
+    responseSerialize: (value: Empty) => Buffer.from(Empty.encode(value).finish()),
+    responseDeserialize: (value: Buffer) => Empty.decode(value),
+  },
   subscribeNodeEventChannel: {
     path: '/crux.CruxNode/SubscribeNodeEventChannel',
     requestStream: false,
@@ -10317,6 +10326,7 @@ export interface CruxNodeServer extends UntypedServiceImplementation {
   getScript: handleUnaryCall<ServiceIdRequest, NodeScriptResponse>
   discardScript: handleUnaryCall<IdRequest, Empty>
   revokeToken: handleUnaryCall<IdRequest, Empty>
+  updateNodeAgent: handleUnaryCall<IdRequest, Empty>
   subscribeNodeEventChannel: handleServerStreamingCall<ServiceIdRequest, NodeEventMessage>
   watchContainerState: handleServerStreamingCall<WatchContainerStateRequest, ContainerStateListMessage>
 }
@@ -10444,6 +10454,18 @@ export interface CruxNodeClient extends Client {
     callback: (error: ServiceError | null, response: Empty) => void,
   ): ClientUnaryCall
   revokeToken(
+    request: IdRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: Empty) => void,
+  ): ClientUnaryCall
+  updateNodeAgent(request: IdRequest, callback: (error: ServiceError | null, response: Empty) => void): ClientUnaryCall
+  updateNodeAgent(
+    request: IdRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: Empty) => void,
+  ): ClientUnaryCall
+  updateNodeAgent(
     request: IdRequest,
     metadata: Metadata,
     options: Partial<CallOptions>,

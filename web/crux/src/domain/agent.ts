@@ -170,6 +170,12 @@ export class Agent {
     this.secretsWatchers.delete(key)
   }
 
+  update() {
+    this.commandChannel.next({
+      update: {},
+    } as AgentCommand)
+  }
+
   debugInfo(logger: Logger) {
     logger.debug(`Agent id: ${this.id}, open: ${!this.commandChannel.closed}`)
     logger.debug(`Deployments: ${this.deployments.size}`)

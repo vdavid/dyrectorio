@@ -31,5 +31,4 @@ type Configuration struct {
 	UpdateHostTimezone   bool          `yaml:"updateHostTimezone"   env:"UPDATE_HOST_TIMEZONE"   env-default:"true"`
 	UpdateMethod         string        `yaml:"updateMethod"         env:"UPDATE_METHOD"          env-default:"off"`
 	UpdatePollInterval   time.Duration `yaml:"updatePollInterval"   env:"UPDATE_POLL_INTERVAL"   env-default:"600s"`
-	WebhookToken         string        `yaml:"webhookToken"         env:"WEBHOOK_TOKEN"          env-default:""`
 }
