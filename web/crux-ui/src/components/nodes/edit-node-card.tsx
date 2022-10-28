@@ -122,7 +122,7 @@ const EditNodeCard = (props: EditNodeCardProps) => {
 
   const onUpdateNode = () => {
     nodeSocket.send(WS_TYPE_UPDATE_NODE_AGENT, {
-      id: node.id
+      id: node.id,
     } as UpdateNodeAgentMessage)
   }
 

@@ -72,7 +72,11 @@ const onStopWatchingContainerStatus = async (
   watchers.stopWatching(connection, message.payload.prefix ?? '')
 }
 
-const onUpdateNodeAgent = async (endpoint: WsEndpoint, connection: WsConnection, message: WsMessage<UpdateNodeAgentMessage>) => {
+const onUpdateNodeAgent = async (
+  endpoint: WsEndpoint,
+  connection: WsConnection,
+  message: WsMessage<UpdateNodeAgentMessage>,
+) => {
   await cruxFromConnection(connection).nodes.updateNodeAgent(message.payload.id)
 }
 

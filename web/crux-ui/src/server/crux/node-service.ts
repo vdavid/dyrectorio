@@ -222,10 +222,7 @@ class DyoNodeService {
       accessedBy: this.identity.id,
     }
 
-    const res = await protomisify<IdRequest, Empty>(this.client, this.client.updateNodeAgent)(
-      IdRequest,
-      req,
-    )
+    const res = await protomisify<IdRequest, Empty>(this.client, this.client.updateNodeAgent)(IdRequest, req)
   }
 }
 
