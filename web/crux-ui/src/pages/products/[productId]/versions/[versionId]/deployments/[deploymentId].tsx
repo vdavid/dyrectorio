@@ -5,6 +5,7 @@ import DeploymentDetailsSection from '@app/components/products/versions/deployme
 import EditDeploymentCard from '@app/components/products/versions/deployments/edit-deployment-card'
 import EditDeploymentInstances from '@app/components/products/versions/deployments/edit-deployment-instances'
 import useDeploymentState from '@app/components/products/versions/deployments/use-deployment-state'
+import { startDeployment } from '@app/components/products/versions/version-deployments-section'
 import { BreadcrumbLink } from '@app/components/shared/breadcrumb'
 import PageHeading from '@app/components/shared/page-heading'
 import { DetailsPageMenu } from '@app/components/shared/page-menu'
@@ -12,7 +13,7 @@ import DyoButton from '@app/elements/dyo-button'
 import { DyoConfirmationModal } from '@app/elements/dyo-modal'
 import LoadingIndicator from '@app/elements/loading-indicator'
 import { defaultApiErrorHandler } from '@app/errors'
-import { DeploymentRoot, mergeConfigs } from '@app/models'
+import { DeploymentInvalidatedSecrets, DeploymentRoot, mergeConfigs } from '@app/models'
 import {
   deploymentApiUrl,
   deploymentDeployUrl,
@@ -92,7 +93,7 @@ const DeploymentDetailsPage = (props: DeploymentDetailsPageProps) => {
 
   const navigateToLog = () => router.push(deploymentDeployUrl(product.id, version.id, deployment.id))
 
-  const onDeploy = () => {
+  const onDeploy = async () => {
     if (node.status !== 'running') {
       toast.error(t('common:nodeUnreachable'))
       return
@@ -115,7 +116,12 @@ const DeploymentDetailsPage = (props: DeploymentDetailsPageProps) => {
       return
     }
 
-    navigateToLog()
+    const result = await startDeployment(router, product.id, version.id, deployment.id)
+    if (result?.property === 'secrets') {
+      const invalidSecrets = result.value as DeploymentInvalidatedSecrets[]
+
+      actions.onInvalidateSecrets(invalidSecrets)
+    }
   }
 
   const onCopyDeployment = async () => {
