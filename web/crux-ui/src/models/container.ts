@@ -151,6 +151,12 @@ export type InitContainer = {
   volumes?: InitContainerVolumeLink[]
 }
 
+export type Marker = {
+  service?: UniqueKeyValue[]
+  deployment?: UniqueKeyValue[]
+  ingress?: UniqueKeyValue[]
+}
+
 export type ContainerConfig = {
   // common
   name?: string
@@ -175,6 +181,7 @@ export type ContainerConfig = {
   restartPolicy?: ContainerRestartPolicyType
   networkMode?: ContainerNetworkMode
   networks?: UniqueKey[]
+  dockerLabels?: UniqueKeyValue[]
 
   // crane
   deploymentStrategy?: ContainerDeploymentStrategyType
@@ -184,6 +191,8 @@ export type ContainerConfig = {
   extraLBAnnotations?: UniqueKeyValue[]
   healthCheckConfig?: ContainerConfigHealthCheck
   resourceConfig?: ContainerConfigResourceConfig
+  annotations?: Marker
+  labels?: Marker
 }
 
 export type JsonInitContainer = {
@@ -203,6 +212,12 @@ export type JsonContainerConfigLog = {
 
 export type JsonContainerConfigImportContainer = Omit<ContainerConfigImportContainer, 'environment'> & {
   environment: JsonKeyValue
+}
+
+export type JsonMarker = {
+  service: JsonKeyValue
+  deployment: JsonKeyValue
+  ingress: JsonKeyValue
 }
 
 export type JsonInitContainerVolumeLink = Omit<InitContainerVolumeLink, 'id'>
@@ -239,6 +254,7 @@ export type JsonContainerConfig = {
   restartPolicy?: ContainerRestartPolicyType
   networkMode?: ContainerNetworkMode
   networks?: string[]
+  dockerLabels: JsonKeyValue
 
   // crane
   deploymentStrategy?: ContainerDeploymentStrategyType
@@ -248,11 +264,13 @@ export type JsonContainerConfig = {
   extraLBAnnotations?: JsonKeyValue
   healthCheckConfig?: ContainerConfigHealthCheck
   resourceConfig?: ContainerConfigResourceConfig
+  annotations: JsonMarker
+  labels: JsonMarker
 }
 
 export type InstanceJsonContainerConfig = Omit<JsonContainerConfig, 'secrets'>
 
-type DagentSpecificConfig = 'logConfig' | 'restartPolicy' | 'networkMode' | 'networks'
+type DagentSpecificConfig = 'logConfig' | 'restartPolicy' | 'networkMode' | 'networks' | 'dockerLabels'
 type CraneSpecificConfig =
   | 'deploymentStrategy'
   | 'customHeaders'
@@ -261,6 +279,8 @@ type CraneSpecificConfig =
   | 'extraLBAnnotations'
   | 'healthCheckConfig'
   | 'resourceConfig'
+  | 'labels'
+  | 'annotations'
 
 export type DagentConfigDetails = Pick<ContainerConfig, DagentSpecificConfig>
 export type CraneConfigDetails = Pick<ContainerConfig, CraneSpecificConfig>
@@ -392,6 +412,21 @@ export const imageConfigToJsonContainerConfig = (imageConfig: ContainerConfig): 
         }
       : null,
     volumes: imageConfig.volumes?.map(it => simplify(it)),
+    dockerLabels: keyValueArrayToJson(imageConfig.dockerLabels),
+    annotations: imageConfig.annotations
+      ? {
+          deployment: keyValueArrayToJson(imageConfig.annotations.deployment),
+          service: keyValueArrayToJson(imageConfig.annotations.service),
+          ingress: keyValueArrayToJson(imageConfig.annotations.ingress),
+        }
+      : null,
+    labels: imageConfig.labels
+      ? {
+          deployment: keyValueArrayToJson(imageConfig.labels.deployment),
+          service: keyValueArrayToJson(imageConfig.labels.service),
+          ingress: keyValueArrayToJson(imageConfig.labels.ingress),
+        }
+      : null,
   }
 
   return config
@@ -502,6 +537,7 @@ export const mergeJsonConfigToContainerConfig = (
     args: mergeKeysWithJson(serialized.args, json.args),
     logConfig: json.logConfig
       ? {
+          ...serialized.logConfig,
           ...json.logConfig,
           options: mergeKeyValuesWithJson(serialized.logConfig?.options, json.logConfig?.options),
         }
@@ -550,6 +586,21 @@ export const mergeJsonConfigToContainerConfig = (
       ...it,
       id: uuid(),
     })),
+    dockerLabels: mergeKeyValuesWithJson(serialized.dockerLabels, json.dockerLabels),
+    labels: json.labels
+      ? {
+          deployment: mergeKeyValuesWithJson(serialized.labels.deployment, json.labels.deployment),
+          service: mergeKeyValuesWithJson(serialized.labels.service, json.labels.service),
+          ingress: mergeKeyValuesWithJson(serialized.labels.ingress, json.labels.ingress),
+        }
+      : null,
+    annotations: json.annotations
+      ? {
+          deployment: mergeKeyValuesWithJson(serialized.annotations.deployment, json.annotations.deployment),
+          service: mergeKeyValuesWithJson(serialized.annotations.service, json.annotations.service),
+          ingress: mergeKeyValuesWithJson(serialized.annotations.ingress, json.annotations.ingress),
+        }
+      : null,
   } as Partial<ContainerConfig>
 
   if ((json as JsonContainerConfig).secrets) {

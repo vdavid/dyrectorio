@@ -977,11 +977,22 @@ export interface KeyValueList {
   data: UniqueKeyValue[]
 }
 
+export interface SecretList {
+  data: UniqueSecretKeyValue[]
+}
+
+export interface Marker {
+  deployment: UniqueKeyValue[]
+  service: UniqueKeyValue[]
+  ingress: UniqueKeyValue[]
+}
+
 export interface DagentContainerConfig {
   logConfig?: LogConfig | undefined
   restartPolicy?: RestartPolicy | undefined
   networkMode?: NetworkMode | undefined
   networks: UniqueKey[]
+  labels: UniqueKeyValue[]
 }
 
 export interface CraneContainerConfig {
@@ -990,6 +1001,8 @@ export interface CraneContainerConfig {
   resourceConfig?: ResourceConfig | undefined
   proxyHeaders?: boolean | undefined
   useLoadBalancer?: boolean | undefined
+  annotations?: Marker | undefined
+  labels?: Marker | undefined
   customHeaders: UniqueKey[]
   extraLBAnnotations: UniqueKeyValue[]
 }
@@ -2788,8 +2801,64 @@ export const KeyValueList = {
   },
 }
 
+function createBaseSecretList(): SecretList {
+  return { data: [] }
+}
+
+export const SecretList = {
+  fromJSON(object: any): SecretList {
+    return { data: Array.isArray(object?.data) ? object.data.map((e: any) => UniqueSecretKeyValue.fromJSON(e)) : [] }
+  },
+
+  toJSON(message: SecretList): unknown {
+    const obj: any = {}
+    if (message.data) {
+      obj.data = message.data.map(e => (e ? UniqueSecretKeyValue.toJSON(e) : undefined))
+    } else {
+      obj.data = []
+    }
+    return obj
+  },
+}
+
+function createBaseMarker(): Marker {
+  return { deployment: [], service: [], ingress: [] }
+}
+
+export const Marker = {
+  fromJSON(object: any): Marker {
+    return {
+      deployment: Array.isArray(object?.deployment)
+        ? object.deployment.map((e: any) => UniqueKeyValue.fromJSON(e))
+        : [],
+      service: Array.isArray(object?.service) ? object.service.map((e: any) => UniqueKeyValue.fromJSON(e)) : [],
+      ingress: Array.isArray(object?.ingress) ? object.ingress.map((e: any) => UniqueKeyValue.fromJSON(e)) : [],
+    }
+  },
+
+  toJSON(message: Marker): unknown {
+    const obj: any = {}
+    if (message.deployment) {
+      obj.deployment = message.deployment.map(e => (e ? UniqueKeyValue.toJSON(e) : undefined))
+    } else {
+      obj.deployment = []
+    }
+    if (message.service) {
+      obj.service = message.service.map(e => (e ? UniqueKeyValue.toJSON(e) : undefined))
+    } else {
+      obj.service = []
+    }
+    if (message.ingress) {
+      obj.ingress = message.ingress.map(e => (e ? UniqueKeyValue.toJSON(e) : undefined))
+    } else {
+      obj.ingress = []
+    }
+    return obj
+  },
+}
+
 function createBaseDagentContainerConfig(): DagentContainerConfig {
-  return { networks: [] }
+  return { networks: [], labels: [] }
 }
 
 export const DagentContainerConfig = {
@@ -2799,6 +2868,7 @@ export const DagentContainerConfig = {
       restartPolicy: isSet(object.restartPolicy) ? restartPolicyFromJSON(object.restartPolicy) : undefined,
       networkMode: isSet(object.networkMode) ? networkModeFromJSON(object.networkMode) : undefined,
       networks: Array.isArray(object?.networks) ? object.networks.map((e: any) => UniqueKey.fromJSON(e)) : [],
+      labels: Array.isArray(object?.labels) ? object.labels.map((e: any) => UniqueKeyValue.fromJSON(e)) : [],
     }
   },
 
@@ -2814,6 +2884,11 @@ export const DagentContainerConfig = {
       obj.networks = message.networks.map(e => (e ? UniqueKey.toJSON(e) : undefined))
     } else {
       obj.networks = []
+    }
+    if (message.labels) {
+      obj.labels = message.labels.map(e => (e ? UniqueKeyValue.toJSON(e) : undefined))
+    } else {
+      obj.labels = []
     }
     return obj
   },
@@ -2835,6 +2910,8 @@ export const CraneContainerConfig = {
       resourceConfig: isSet(object.resourceConfig) ? ResourceConfig.fromJSON(object.resourceConfig) : undefined,
       proxyHeaders: isSet(object.proxyHeaders) ? Boolean(object.proxyHeaders) : undefined,
       useLoadBalancer: isSet(object.useLoadBalancer) ? Boolean(object.useLoadBalancer) : undefined,
+      annotations: isSet(object.annotations) ? Marker.fromJSON(object.annotations) : undefined,
+      labels: isSet(object.labels) ? Marker.fromJSON(object.labels) : undefined,
       customHeaders: Array.isArray(object?.customHeaders)
         ? object.customHeaders.map((e: any) => UniqueKey.fromJSON(e))
         : [],
@@ -2857,6 +2934,9 @@ export const CraneContainerConfig = {
       (obj.resourceConfig = message.resourceConfig ? ResourceConfig.toJSON(message.resourceConfig) : undefined)
     message.proxyHeaders !== undefined && (obj.proxyHeaders = message.proxyHeaders)
     message.useLoadBalancer !== undefined && (obj.useLoadBalancer = message.useLoadBalancer)
+    message.annotations !== undefined &&
+      (obj.annotations = message.annotations ? Marker.toJSON(message.annotations) : undefined)
+    message.labels !== undefined && (obj.labels = message.labels ? Marker.toJSON(message.labels) : undefined)
     if (message.customHeaders) {
       obj.customHeaders = message.customHeaders.map(e => (e ? UniqueKey.toJSON(e) : undefined))
     } else {

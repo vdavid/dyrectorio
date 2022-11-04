@@ -164,11 +164,38 @@ export interface LogConfig_OptionsEntry {
   value: string
 }
 
+export interface Marker {
+  deployment: { [key: string]: string }
+  service: { [key: string]: string }
+  ingress: { [key: string]: string }
+}
+
+export interface Marker_DeploymentEntry {
+  key: string
+  value: string
+}
+
+export interface Marker_ServiceEntry {
+  key: string
+  value: string
+}
+
+export interface Marker_IngressEntry {
+  key: string
+  value: string
+}
+
 export interface DagentContainerConfig {
   logConfig?: LogConfig | undefined
   restartPolicy?: RestartPolicy | undefined
   networkMode?: NetworkMode | undefined
   networks: string[]
+  labels: { [key: string]: string }
+}
+
+export interface DagentContainerConfig_LabelsEntry {
+  key: string
+  value: string
 }
 
 export interface CraneContainerConfig {
@@ -177,6 +204,8 @@ export interface CraneContainerConfig {
   resourceConfig?: ResourceConfig | undefined
   proxyHeaders?: boolean | undefined
   useLoadBalancer?: boolean | undefined
+  annotations?: Marker | undefined
+  labels?: Marker | undefined
   customHeaders: string[]
   extraLBAnnotations: { [key: string]: string }
 }
@@ -705,8 +734,111 @@ export const LogConfig_OptionsEntry = {
   },
 }
 
+function createBaseMarker(): Marker {
+  return { deployment: {}, service: {}, ingress: {} }
+}
+
+export const Marker = {
+  fromJSON(object: any): Marker {
+    return {
+      deployment: isObject(object.deployment)
+        ? Object.entries(object.deployment).reduce<{ [key: string]: string }>((acc, [key, value]) => {
+            acc[key] = String(value)
+            return acc
+          }, {})
+        : {},
+      service: isObject(object.service)
+        ? Object.entries(object.service).reduce<{ [key: string]: string }>((acc, [key, value]) => {
+            acc[key] = String(value)
+            return acc
+          }, {})
+        : {},
+      ingress: isObject(object.ingress)
+        ? Object.entries(object.ingress).reduce<{ [key: string]: string }>((acc, [key, value]) => {
+            acc[key] = String(value)
+            return acc
+          }, {})
+        : {},
+    }
+  },
+
+  toJSON(message: Marker): unknown {
+    const obj: any = {}
+    obj.deployment = {}
+    if (message.deployment) {
+      Object.entries(message.deployment).forEach(([k, v]) => {
+        obj.deployment[k] = v
+      })
+    }
+    obj.service = {}
+    if (message.service) {
+      Object.entries(message.service).forEach(([k, v]) => {
+        obj.service[k] = v
+      })
+    }
+    obj.ingress = {}
+    if (message.ingress) {
+      Object.entries(message.ingress).forEach(([k, v]) => {
+        obj.ingress[k] = v
+      })
+    }
+    return obj
+  },
+}
+
+function createBaseMarker_DeploymentEntry(): Marker_DeploymentEntry {
+  return { key: '', value: '' }
+}
+
+export const Marker_DeploymentEntry = {
+  fromJSON(object: any): Marker_DeploymentEntry {
+    return { key: isSet(object.key) ? String(object.key) : '', value: isSet(object.value) ? String(object.value) : '' }
+  },
+
+  toJSON(message: Marker_DeploymentEntry): unknown {
+    const obj: any = {}
+    message.key !== undefined && (obj.key = message.key)
+    message.value !== undefined && (obj.value = message.value)
+    return obj
+  },
+}
+
+function createBaseMarker_ServiceEntry(): Marker_ServiceEntry {
+  return { key: '', value: '' }
+}
+
+export const Marker_ServiceEntry = {
+  fromJSON(object: any): Marker_ServiceEntry {
+    return { key: isSet(object.key) ? String(object.key) : '', value: isSet(object.value) ? String(object.value) : '' }
+  },
+
+  toJSON(message: Marker_ServiceEntry): unknown {
+    const obj: any = {}
+    message.key !== undefined && (obj.key = message.key)
+    message.value !== undefined && (obj.value = message.value)
+    return obj
+  },
+}
+
+function createBaseMarker_IngressEntry(): Marker_IngressEntry {
+  return { key: '', value: '' }
+}
+
+export const Marker_IngressEntry = {
+  fromJSON(object: any): Marker_IngressEntry {
+    return { key: isSet(object.key) ? String(object.key) : '', value: isSet(object.value) ? String(object.value) : '' }
+  },
+
+  toJSON(message: Marker_IngressEntry): unknown {
+    const obj: any = {}
+    message.key !== undefined && (obj.key = message.key)
+    message.value !== undefined && (obj.value = message.value)
+    return obj
+  },
+}
+
 function createBaseDagentContainerConfig(): DagentContainerConfig {
-  return { networks: [] }
+  return { networks: [], labels: {} }
 }
 
 export const DagentContainerConfig = {
@@ -716,6 +848,12 @@ export const DagentContainerConfig = {
       restartPolicy: isSet(object.restartPolicy) ? restartPolicyFromJSON(object.restartPolicy) : undefined,
       networkMode: isSet(object.networkMode) ? networkModeFromJSON(object.networkMode) : undefined,
       networks: Array.isArray(object?.networks) ? object.networks.map((e: any) => String(e)) : [],
+      labels: isObject(object.labels)
+        ? Object.entries(object.labels).reduce<{ [key: string]: string }>((acc, [key, value]) => {
+            acc[key] = String(value)
+            return acc
+          }, {})
+        : {},
     }
   },
 
@@ -732,6 +870,29 @@ export const DagentContainerConfig = {
     } else {
       obj.networks = []
     }
+    obj.labels = {}
+    if (message.labels) {
+      Object.entries(message.labels).forEach(([k, v]) => {
+        obj.labels[k] = v
+      })
+    }
+    return obj
+  },
+}
+
+function createBaseDagentContainerConfig_LabelsEntry(): DagentContainerConfig_LabelsEntry {
+  return { key: '', value: '' }
+}
+
+export const DagentContainerConfig_LabelsEntry = {
+  fromJSON(object: any): DagentContainerConfig_LabelsEntry {
+    return { key: isSet(object.key) ? String(object.key) : '', value: isSet(object.value) ? String(object.value) : '' }
+  },
+
+  toJSON(message: DagentContainerConfig_LabelsEntry): unknown {
+    const obj: any = {}
+    message.key !== undefined && (obj.key = message.key)
+    message.value !== undefined && (obj.value = message.value)
     return obj
   },
 }
@@ -752,6 +913,8 @@ export const CraneContainerConfig = {
       resourceConfig: isSet(object.resourceConfig) ? ResourceConfig.fromJSON(object.resourceConfig) : undefined,
       proxyHeaders: isSet(object.proxyHeaders) ? Boolean(object.proxyHeaders) : undefined,
       useLoadBalancer: isSet(object.useLoadBalancer) ? Boolean(object.useLoadBalancer) : undefined,
+      annotations: isSet(object.annotations) ? Marker.fromJSON(object.annotations) : undefined,
+      labels: isSet(object.labels) ? Marker.fromJSON(object.labels) : undefined,
       customHeaders: Array.isArray(object?.customHeaders) ? object.customHeaders.map((e: any) => String(e)) : [],
       extraLBAnnotations: isObject(object.extraLBAnnotations)
         ? Object.entries(object.extraLBAnnotations).reduce<{ [key: string]: string }>((acc, [key, value]) => {
@@ -775,6 +938,9 @@ export const CraneContainerConfig = {
       (obj.resourceConfig = message.resourceConfig ? ResourceConfig.toJSON(message.resourceConfig) : undefined)
     message.proxyHeaders !== undefined && (obj.proxyHeaders = message.proxyHeaders)
     message.useLoadBalancer !== undefined && (obj.useLoadBalancer = message.useLoadBalancer)
+    message.annotations !== undefined &&
+      (obj.annotations = message.annotations ? Marker.toJSON(message.annotations) : undefined)
+    message.labels !== undefined && (obj.labels = message.labels ? Marker.toJSON(message.labels) : undefined)
     if (message.customHeaders) {
       obj.customHeaders = message.customHeaders.map(e => e)
     } else {
